@@ -10,54 +10,60 @@ import java.util.*;
  * Created by leon on 1/23/18.
  * Made WAY better by kristofer 6/16/20
  */
+
 public class PhoneBook {
 
-    private final Map<String, List<String>> phonebook;
+    private Map<String, List<String>> phonebook;
 
     public PhoneBook(Map<String, List<String>> map) {
         this.phonebook = map;
     }
+
     public PhoneBook() {
-        this(new LinkedHashMap<>());
+        this.phonebook = new LinkedHashMap<>();
     }
 
     public void add(String name, String phoneNumber) {
-        List<String> numbers = phonebook.getOrDefault(name, new ArrayList<>());
-        numbers.add(phoneNumber);
-        phonebook.put(name, numbers);
+        this.phonebook.put(name, new ArrayList<>(Collections.singleton(phoneNumber)));
     }
 
     public void addAll(String name, String... phoneNumbers) {
-        List<String> numbers = phonebook.getOrDefault(name, new ArrayList<>());
-        numbers.addAll(Arrays.asList(phoneNumbers));
-        phonebook.put(name, numbers);
+        this.phonebook.put(name, new ArrayList<>(List.of(phoneNumbers)));
     }
+
     public void remove(String name) {
-        phonebook.remove(name);
+        this.phonebook.remove(name);
     }
 
     public Boolean hasEntry(String name) {
-        return phonebook.containsKey(name);
+        return this.phonebook.containsKey(name);
+    }
+
+    public Boolean hasEntry(String name, String phoneNumber) {
+        List<String> phoneNumbers = this.phonebook.getOrDefault(name, new ArrayList<>());
+        return phoneNumbers.contains(phoneNumber);
     }
 
     public List<String> lookup(String name) {
-        return phonebook.getOrDefault(name, new ArrayList<>());
+        return this.phonebook.get(name);
     }
 
-    public String reverseLookup(String phoneNumber)  {
-        for (Map.Entry<String, List<String>> entry : phonebook.entrySet()) {
-            if (entry.getValue().contains(phoneNumber)) {
-                return entry.getKey();
+    public String reverseLookup(String phoneNumber) {
+        for(Map.Entry<String, List<String>> entry : phonebook.entrySet()) {
+            String name = entry.getKey();
+            List<String> phoneNumbers = entry.getValue();
+            if (phoneNumbers.contains(phoneNumber)) {
+                return name;
             }
         }
         return null;
     }
 
     public List<String> getAllContactNames() {
-        return new ArrayList<>(phonebook.keySet());
+        return new ArrayList<>(this.phonebook.keySet());
     }
 
     public Map<String, List<String>> getMap() {
-        return phonebook;
+        return this.phonebook;
     }
 }
